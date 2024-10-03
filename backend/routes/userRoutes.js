@@ -179,4 +179,39 @@ userRouter.get("/check-auth", authenticateUser, async (req, res) => {
   res.status(200).send("User is authenticated");
 });
 
+// Update user profile
+userRouter.put('/profile', authenticateUser, async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, { new: true });
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+userRouter.get('/movie/:id', async (req, res) => {
+  try {
+    const movie = await Movie.findById(req.params.id).populate('reviews'); // Populate reviews
+    res.status(200).json(movie);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+//change password
+userRouter.put('/change-password', authenticateUser, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  const user = await User.findById(req.user._id);
+  const isMatch = await user.comparePassword(currentPassword);
+
+  if (!isMatch) {
+    return res.status(400).json({ message: 'Current password is incorrect' });
+  }
+
+  user.password = newPassword;
+  await user.save();
+  res.status(200).json({ message: 'Password updated successfully' });
+});
+
+
 export default userRouter;

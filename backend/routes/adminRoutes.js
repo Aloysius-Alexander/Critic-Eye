@@ -9,6 +9,9 @@ import { adminToken } from "../utils/generateToken.js";
 import { cloudinaryInstance } from "../configs/cloudinary.js";
 import authenticateAdmin from "../middlewares/adminMiddleware.js";
 import { check, validationResult } from "express-validator";
+import { Movie, User, Review } from '../models'; // Import your models
+import authenticateAdmin from '../middlewares/adminMiddleware'; // Assuming you have an admin authentication middleware
+
 
 const adminRouter = express.Router();
 
@@ -266,4 +269,64 @@ adminRouter.get("/check-admin", authenticateAdmin, async (req, res) => {
   res.json({ message: "Authenticated Admin", success: true });
 });
 
+// Backend route to fetch admin overview data
+adminRouter.get('/overview', authenticateAdmin, async (req, res) => {
+  try {
+    const totalMovies = await Movie.countDocuments();
+    const totalUsers = await User.countDocuments();
+    const totalReviews = await Review.countDocuments();
+
+    res.status(200).json({ totalMovies, totalUsers, totalReviews });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+adminRouter.get('/show-movies', async (req, res) => {
+  const { page = 1, limit = 10 } = req.query; // Extract page and limit from query params
+  try {
+    const movies = await Movie.find()
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit)); // Implement pagination
+    const totalMovies = await Movie.countDocuments(); // Get the total number of movies
+
+    res.json({ totalMovies, movies }); // Send totalMovies and the movies for the current page
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+// Get all reviews
+adminRouter.get('/reviews', authenticateAdmin, async (req, res) => {
+  try {
+    const reviews = await Review.find().populate('movieId userId');
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Approve a review
+adminRouter.put('/review/:id/approve', authenticateAdmin, async (req, res) => {
+  try {
+    const review = await Review.findByIdAndUpdate(req.params.id, { isApproved: true });
+    if (!review) return res.status(404).json({ message: 'Review not found' });
+    res.status(200).json({ message: 'Review approved' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Reject (delete) a review
+adminRouter.delete('/review/:id/reject', authenticateAdmin, async (req, res) => {
+  try {
+    const review = await Review.findByIdAndDelete(req.params.id);
+    if (!review) return res.status(404).json({ message: 'Review not found' });
+    res.status(200).json({ message: 'Review rejected and deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 export default adminRouter;
+

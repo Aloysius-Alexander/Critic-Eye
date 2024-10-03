@@ -1,35 +1,33 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const reviewSchema = new mongoose.Schema(
-  {
-    movieId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Movie",
-      required: true,
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    userName: {
-      type: String,
-    },
-    rating: {
-      type: Number,
-      required: true,
-    },
-    content: {
-      type: String,
-      required: true,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+const reviewSchema = new mongoose.Schema({
+  movieId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Movie',
+    required: true,
   },
-  { timestamps: true }
-);
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  isApproved: {
+    type: Boolean,
+    default: false, // New field to track approval status
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-const Review = mongoose.model("Review", reviewSchema);
-
+const Review = mongoose.model('Review', reviewSchema);
 export default Review;
