@@ -9,8 +9,7 @@ import { adminToken } from "../utils/generateToken.js";
 import { cloudinaryInstance } from "../configs/cloudinary.js";
 import authenticateAdmin from "../middlewares/adminMiddleware.js";
 import { check, validationResult } from "express-validator";
-import { Movie, User, Review } from '../models'; // Import your models
-import authenticateAdmin from '../middlewares/adminMiddleware'; // Assuming you have an admin authentication middleware
+//import authenticateAdmin from '../middlewares/adminMiddleware'; // Assuming you have an admin authentication middleware
 
 
 const adminRouter = express.Router();
