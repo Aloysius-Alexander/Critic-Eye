@@ -4,43 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Button, Input, FormControl, FormLabel, Textarea } from '@chakra-ui/react';
 import { Alert, AlertIcon } from '@chakra-ui/react';
 
-const [error, setError] = useState(null);
-const [success, setSuccess] = useState(null);
-
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await addMovie(movieData);
-      setSuccess('Movie added successfully');
-      navigate('/admin/dashboard');
-    } catch (err) {
-      setError('Failed to add movie');
-    }
-  };
-  
-  // JSX for success message
-  {success && (
-    <Alert status="success" mb="4">
-      <AlertIcon />
-      {success}
-    </Alert>
-  )}
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    await addMovie(movieData);
-    navigate('/admin/dashboard');
-  } catch (err) {
-    setError('Failed to add movie');
-  }
-};
-// In the JSX
-{error && (
-    <Alert status="error" mb="4">
-      <AlertIcon />
-      {error}
-    </Alert>
-  )}
 function AddMoviePage() {
     const [movieData, setMovieData] = useState({
         title: '',
@@ -50,6 +13,8 @@ function AddMoviePage() {
         summary: '',
         trailerUrl: '',
     });
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -60,14 +25,30 @@ function AddMoviePage() {
         e.preventDefault();
         try {
             await addMovie(movieData); // Call the backend service
+            setSuccess('Movie added successfully');
+            setError(null); // Clear any previous errors
             navigate('/admin/dashboard'); // Redirect to dashboard after adding movie
-        } catch (error) {
-            console.error('Error adding movie:', error);
+        } catch (err) {
+            setError('Failed to add movie');
+            setSuccess(null); // Clear success message
         }
     };
 
     return (
         <Box maxW="md" mx="auto" mt="10">
+            {success && (
+                <Alert status="success" mb="4">
+                    <AlertIcon />
+                    {success}
+                </Alert>
+            )}
+            {error && (
+                <Alert status="error" mb="4">
+                    <AlertIcon />
+                    {error}
+                </Alert>
+            )}
+
             <form onSubmit={handleSubmit}>
                 <FormControl mb="4">
                     <FormLabel>Title</FormLabel>
@@ -92,10 +73,6 @@ function AddMoviePage() {
                 <FormControl mb="4">
                     <FormLabel>Trailer URL</FormLabel>
                     <Input name="trailerUrl" value={movieData.trailerUrl} onChange={handleChange} />
-                </FormControl>
-                <FormControl mb="4" isInvalid={!movieData.title}>
-                    <FormLabel>Title</FormLabel>
-                    <Input name="title" value={movieData.title} onChange={handleChange} required />
                 </FormControl>
 
                 <Button type="submit" colorScheme="teal">Add Movie</Button>

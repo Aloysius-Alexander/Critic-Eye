@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/v1/user'; // Update with your backend URL
 
-
 // Add a new review for a movie
 export const addReview = async (reviewData) => {
   const response = await axios.post(`${API_URL}/add-review`, reviewData, {
@@ -11,19 +10,12 @@ export const addReview = async (reviewData) => {
   return response.data;
 };
 
-// Fetch all reviews for a movie
-export const getReviews = async (movieId) => {
+// Fetch all reviews for a specific movie
+export const getMovieReviews = async (movieId) => {
   const response = await axios.get(`${API_URL}/movie/${movieId}/get-reviews`);
   return response.data;
 };
 
-// Admin - Get all reviews
-export const getReviews = async () => {
-  const response = await axios.get(`${API_URL}/reviews`, {
-    withCredentials: true, // Send cookies for authentication
-  });
-  return response.data;
-};
 
 // Admin - Approve a review
 export const approveReview = async (id) => {
