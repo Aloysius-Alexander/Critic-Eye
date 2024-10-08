@@ -1,13 +1,20 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import AppRoutes from './routes';
-import AuthProvider from './context/AuthContext'; // Import AuthProvider
-import './styles/index.css'; // Tailwind CSS entry point
+import ReactDOM from 'react-dom/client'; // Import the new API
+import './index.css';
+import App from './App';
+import { ChakraProvider } from '@chakra-ui/react';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+// Find the root element in the DOM
+const rootElement = document.getElementById('root');
+
+// Create a React root using the new createRoot API
+const root = ReactDOM.createRoot(rootElement);
+
+// Render the App component
+root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <ChakraProvider>
+      <App />
+    </ChakraProvider>
   </React.StrictMode>
 );
